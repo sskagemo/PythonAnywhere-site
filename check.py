@@ -39,11 +39,12 @@ schema = Namespace("http://schema.org/")
 #Reading rdf from webpage using rdflib; based on code from http://rdflib.readthedocs.org/en/stable/gettingstarted.html
 g = Graph()
 
+result = ""
 hours = { "opens":[], "closes":[] }
 
-def main ():
+def openOrNot ():
 
-    global options, args
+    global options, args, result
     # TODO: Do something more interesting here...
     now = datetime.now()
     g.parse(url)
@@ -59,18 +60,33 @@ def main ():
     hours["opens"].sort()
     hours["closes"].sort()
 
-    if hours["opens"][0] < str(now.hour):
-        if hours["closes"][0] > str(now.hour):
-            print("Tøyenbadet er åpent!")
-        else:
-            print("Tøyenbadet er stengt!")
 
+    if len(hours["opens"]) == len(hours["closes"]):
+        if len(hours["opens"]) > 1:
+            if hours["opens"][1] < str(now.hour):
+                if hours["closes"][1] > str(now.hour):
+                    result = "Tøyenbadet er åpent!"
+                else:
+                    result = "Tøyenbadet er stengt!"
+        else:
+            if hours["opens"][0] < str(now.hour):
+                if hours["closes"][0] > str(now.hour):
+                    result = "Tøyenbadet er åpent!"
+                else:
+                    result = "Tøyenbadet er stengt!"
+    else:
+        print("Noe er galt -- ulikt antall åpnings- og lukketider!")
+        # NB! HAr ikke tatt høyde for mer enn to åpnings- og lukketider.
+
+
+    return result
 #    for date in g.objects(None, s.validFrom):
 #        if str(date) == str(now.date()):
 #            print("%s is today!"%date)
 
-    print(hours)
 
 
 if __name__ == '__main__':
-    main()
+    openOrNot()
+    print(result)
+    print(hours)

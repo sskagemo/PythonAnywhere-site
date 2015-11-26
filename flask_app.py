@@ -2,7 +2,7 @@
 # Based on the simple Flask Hello World app ...
 
 from flask import Flask
-import rdflib
+from check import openOrNot
 
 app = Flask(__name__)
 
@@ -19,15 +19,30 @@ htmldocEnd = """
 </html>
 """
 
+teller = 0
+
 #Reading rdf from webpage using rdflib; based on code from http://rdflib.readthedocs.org/en/stable/gettingstarted.html
-g = rdflib.Graph()
-g.parse("https://www.oslo.kommune.no/natur-kultur-og-fritid/svommehaller-i-oslo/toyenbadet/")
+#g = rdflib.Graph()
 
 @app.route('/')
 def hello_world():
 
-    svar = "Det er " + str(len(g)) + " tripler på siden om Tøyenbadet"
+    global teller
+    teller+=1
 
-    return htmldocStart + svar + htmldocEnd
+    #g.remove((None,None,None))
+    #g.parse("https://www.oslo.kommune.no/natur-kultur-og-fritid/svommehaller-i-oslo/toyenbadet/")
+
+    #svar = "Det er " + str(len(g)) + " tripler på siden om Tøyenbadet, og det har du spurt om " + str(teller) + " ganger."
+
+    return htmldocStart + openOrNot() + htmldocEnd
+    #return openOrNot()
     #'Hello from Flask!'
 
+@app.route('/Agathe-og-Simon')
+def hei_dere():
+    return """<html><head></head><body><p>Dere er verdens beste! Jeg <blink><strong>digge-digge-digge-digge-digger</strong></blink> dere! Stolt hilsen pappaen deres. Og <a href="/mamma">mammaen deres</a> også!</p></body></html>"""
+
+@app.route('/mamma')
+def hei_mamma():
+    return """<html><head></head><body><p>Mamma er best, ingen protest - den som står imot, må spise gulrot</p></body></html>"""
